@@ -1,11 +1,27 @@
 # Alone링크메모장 구현
-
+## Requirements
+- asgiref            3.4.1
+- beautifulsoup4     4.10.0
+- certifi            2021.5.30
+- charset-normalizer 2.0.6
+- click              8.0.1
+- Flask              2.0.1
+- idna               3.2
+- itsdangerous       2.0.1
+- Jinja2             3.0.1
+- MarkupSafe         2.0.1
+- pip                20.1.1
+- pymongo            3.12.0
+- requests           2.26.0
+- setuptools         47.1.0
+- soupsieve          2.2.1
+- urllib3            1.26.6
+- Werkzeug           2.0.1
 ## 기능 추가 
 - [ ] 내용 수정하기 기능 구현 
 - [ ] 삭제하기 기능 구현 
 - [ ] 개인별 페이지 구성해보기 - 로그인 페이지? 
-## TODO 
-* 레이아웃
+## TODO -* 레이아웃
 - [x] 포스팅 박스 열고 닫는 기능 
 - [x] 미디어 형식으로 포스팅 출력하기
   - [x] 포함되어야 하는 항목들 : 이미지, 제목, 설명, 코멘트, 수정하기버튼, 삭제하기버튼
