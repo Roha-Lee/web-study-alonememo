@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
-from alonememoAPI import *
+from alonememoAPI import posts_post_response, posts_get_response
 client = MongoClient('localhost', 27017)
 db = client.db_alonememo
 
@@ -10,24 +10,17 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/managePost', methods=['GET'])
-def manage_post_get():
-    return jsonify({'result':'success','msg':'GET'})
+@app.route('/posts', methods=['GET'])
+def read_memos():
+    response = posts_get_response(db)
+    return jsonify(response)
 
-@app.route('/managePost', methods=['POST'])
-def manage_post_modify():
-    role = request.form['role']
-    if role == "ADD":
-        print(role)
-        return jsonify({'result':'Success','msg':'ADD complete'})
-    elif role == "MODIFY":
-        print(role)
-        return jsonify({'result':'Success','msg':'MODIFY complete'})
-    elif role == "REMOVE":
-        print(role)
-        return jsonify({'result':'Success','msg':'REMOVE complete'})
-    else:
-        return jsonify({'result':'Fail','msg':'Unknown role'})
+@app.route('/posts', methods=['POST'])
+def add_memo():
+    url_give = request.form['url_give']
+    comment_give = request.form['comment_give']
+    response = posts_post_response(db, url_give, comment_give)
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
