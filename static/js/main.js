@@ -1,12 +1,12 @@
-mediaTemplate = `<div class="media">
+mediaTemplate = `<div class="media" id="{{ID}}">
 <img src="{{IMAGE}}" class="align-self-center mr-3" alt="썸네일 이미지">
 <div class="media-body">
   <h5 class="mt-0"><a href="{{URL}}" target="_blank">{{TITLE}}</a></h5>
   <p>{{DESCRIPTION}}</p>
   <p class="mb-0">{{COMMENT}}</p>
   <div class="btn-container">
-    <button class="btn btn-primary btn-modify" onclick="modifyMemo()">수정하기</button>
-    <button class="btn btn-primary btn-delete" onclick="deleteMemo()">삭제하기</button>
+    <button class="btn btn-primary btn-modify" onclick="modifyMemo(this)">수정하기</button>
+    <button class="btn btn-primary btn-delete" onclick="deleteMemo(this)">삭제하기</button>
   </div>
 </div>
 </div>`
@@ -26,12 +26,12 @@ function togglePostingBox() {
 function getMemo() {
   $.ajax({
     type: "GET",
-    url: "/posts",
+    url: "/api/getPosts",
     data: {},
     success: function({result, items}) {
       if(result === 'success'){
         let newMedia
-        items.forEach(({url, image, description, comment, title})=>{
+        items.forEach(({url, image, description, comment, title, _id:id})=>{
           newMedia = mediaTemplate
           newMedia = newMedia
                       .replace('{{URL}}', url)
@@ -39,6 +39,7 @@ function getMemo() {
                       .replace('{{DESCRIPTION}}', description)
                       .replace('{{COMMENT}}', comment)
                       .replace('{{IMAGE}}',image)
+                      .replace('{{ID}}', id)
           $('.media-container').append(newMedia)  
         })
       }
@@ -68,12 +69,12 @@ function addMemo() {
   
   $.ajax({
     type: "POST",
-    url: "/posts",
+    url: "/api/createPost",
     data: {url_give,
           comment_give},
     success: function({result, item}) {
       if(result === 'success'){
-        let {url, image, description, comment, title} = item
+        let {url, image, description, comment, title, _id:id} = item
         let newMedia = mediaTemplate
         newMedia = newMedia
                     .replace('{{URL}}', url)
@@ -81,6 +82,7 @@ function addMemo() {
                     .replace('{{DESCRIPTION}}', description)
                     .replace('{{COMMENT}}', comment)
                     .replace('{{IMAGE}}',image)
+                    .replace('{{ID}}', id)
         $('.media-container').append(newMedia)
         media_container_toggle()
         alert("포스팅 성공!")
@@ -105,8 +107,21 @@ function media_container_toggle() {
   }
 }
 
-function deleteMemo() {
-  console.log('구현 예정')
+function deleteMemo(e) {
+  let media_selected = $(e).closest('.media')
+  let id_give = media_selected.attr('id')
+  $.ajax({
+    type: 'DELETE',
+    url: '/api/deletePost',
+    data: {id_give},
+    success: function({result}){
+      if(result === 'success'){
+        media_selected.remove()
+        media_container_toggle()
+        alert('삭제 성공!')
+      }
+    }
+  })
 }
 
 function modifyMemo() {
