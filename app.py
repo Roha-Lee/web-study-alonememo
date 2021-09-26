@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import requests
 from alonememoAPI import api_get_posts, api_create_post, api_delete_post
-client = MongoClient('mongodb://roha:horang2k@13.125.253.18', 27017)
+client = MongoClient('localhost', 27017)
 db = client.db_alonememo
 
 app = Flask(__name__)

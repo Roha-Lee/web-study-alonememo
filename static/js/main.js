@@ -1,14 +1,41 @@
 mediaTemplate = `<div class="media" id="{{ID}}">
 <img src="{{IMAGE}}" class="align-self-center mr-3" alt="썸네일 이미지">
 <div class="media-body">
-  <h5 class="mt-0"><a href="{{URL}}" target="_blank">{{TITLE}}</a></h5>
-  <p>{{DESCRIPTION}}</p>
-  <p class="mb-0">{{COMMENT}}</p>
+  <div class="media-contents-container">
+    <h5 class="mt-0"><a href="{{URL}}" target="_blank">{{TITLE}}</a></h5>
+    <p class="post-description-text">{{DESCRIPTION}}</p>
+    <p class="mb-0">{{COMMENT}}</p>
+  </div>
   <div class="btn-container">
     <button class="btn btn-primary btn-modify" onclick="modifyMemo(this)">수정하기</button>
     <button class="btn btn-primary btn-delete" onclick="deleteMemo(this)">삭제하기</button>
   </div>
 </div>
+<div class="modify-form-container">
+  <div class="form-group">
+    <label for="post-url">포스트 URL</label>
+    <input type="text" class="form-control" id="post-url">  
+  </div>
+  <div class="form-group">
+    <label for="post-title">제목</label>
+    <input type="text" class="form-control" id="post-title">  
+  </div>
+  <div class="form-group">
+    <label for="post-image-url">이미지 URL</label>
+    <input type="text" class="form-control" id="post-image-url">  
+  </div>
+  <div class="form-group">
+    <label for="post-description">설명</label>
+    <textarea type="text" class="form-control" id="post-description"></textarea>  
+  </div>
+  <div class="form-group">
+    <label for="post-comment">코멘트</label>
+    <textarea type="text" class="form-control" id="post-comment"></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">완료</button>
+  <button type="submit" class="btn btn-primary">취소</button>
+</div>
+        
 </div>`
 
 function togglePostingBox() {
@@ -124,8 +151,29 @@ function deleteMemo(e) {
   })
 }
 
-function modifyMemo() {
-  console.log('구현 예정')
+function modifyMemo(e) {
+  let thisMedia = $(e).closest('.media')
+  let imgTag = thisMedia.children('img')
+  let mediaBody = thisMedia.children('.media-body')  
+  let modifyForm = thisMedia.children('.modify-form-container')
+  let imgUrl, postTitle, postDescription, postComment, postUrl
+  imgUrl = imgTag.attr('src')
+  postTitle = mediaBody.find('.media-contents-container .mt-0>a').text()
+  postUrl = mediaBody.find('.media-contents-container .mt-0>a').attr('href')
+  postDescription = mediaBody.find('.media-contents-container>.post-description-text').text()
+  postComment = mediaBody.find('.media-contents-container>.mb-0').text()
+  
+  imgTag.hide()
+  mediaBody.hide()
+  modifyForm.show()
+
+  modifyForm.find('div.form-group>input#post-url').val(postUrl)
+  modifyForm.find('div.form-group>input#post-title').val(postTitle)
+  modifyForm.find('div.form-group>input#post-image-url').val(imgUrl)
+  modifyForm.find('div.form-group>textarea#post-description').text(postDescription)
+  modifyForm.find('div.form-group>textarea#post-comment').text(postComment)
+
+  
 }
 
 $(document).ready(function(){

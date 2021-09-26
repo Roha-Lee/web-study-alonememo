@@ -22,7 +22,7 @@ body {
   border-radius: 5px;
 }
 
-.media {
+.media-container .media {
   width: 75%;
   margin: 20px auto ;
   padding: 20px 30px;
@@ -32,7 +32,10 @@ body {
   flex-wrap: wrap;
   justify-content: center;
 }
-
+.media-container .media .modify-form-container {
+  width: 100%;
+  display: none;
+}
 .media-body {
   margin: auto;
   max-width: 550px;
