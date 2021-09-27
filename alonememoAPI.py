@@ -4,21 +4,34 @@ from bs4 import BeautifulSoup
 from bson import ObjectId
 def api_get_posts(database):
     items = _get_all_from_database(database)
-    response = {'result':'success', 
-                'items':items}
+    response = {'result': 'success', 
+                'items': items}
     return response
 
 def api_create_post(database, url, comment):
     document = _get_complete_data(url, comment)
     if _add_to_database(database, document):
-        return {'result':'success', 'item': document}
-    return {'result':'fail', 'item': None}
+        return {'result': 'success', 'item': document}
+    return {'result': 'fail', 'item': None}
 
 def api_delete_post(database, id):
     result = database.posts.delete_one({'_id': ObjectId(id)})
     if result.deleted_count:
-        return {'result':'success'}
-    {'result':'fail'}
+        return {'result': 'success'}
+    return {'result': 'fail'}
+
+def api_modify_post(database, data):
+    result = database.posts.update_one({'_id': ObjectId(data['id_give'])}, 
+        {'$set': {
+            'title': data['title_give'],
+            'image': data['image_url_give'],
+            'url': data['url_give'],
+            'description': data['description_give'],
+            'comment': data['comment_give']}})
+    if result.modified_count:
+        return {'result': 'success'}
+    return {'result': 'fail'}
+
 def _get_complete_data(url, comment):
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
     data = requests.get(url, headers=headers)

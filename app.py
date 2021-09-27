@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import requests
-from alonememoAPI import api_get_posts, api_create_post, api_delete_post
+from alonememoAPI import api_get_posts, api_create_post, api_delete_post, api_modify_post
 client = MongoClient('localhost', 27017)
 db = client.db_alonememo
 
@@ -29,5 +29,9 @@ def delete_memo():
     response = api_delete_post(db, id_give)
     return jsonify(response)
 
+@app.route('/api/modifyPost', methods=['POST'])
+def modify_memo():
+    response = api_modify_post(db, request.form)
+    return jsonify(response)
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)

@@ -32,8 +32,8 @@ mediaTemplate = `<div class="media" id="{{ID}}">
     <label for="post-comment">코멘트</label>
     <textarea type="text" class="form-control" id="post-comment"></textarea>
   </div>
-  <button type="submit" class="btn btn-primary">완료</button>
-  <button type="submit" class="btn btn-primary">취소</button>
+  <button type="submit" class="btn btn-primary" onclick="modifyComplete('{{ID}}')">완료</button>
+  <button type="submit" class="btn btn-primary" onclick="modifyCancle('{{ID}}')">취소</button>
 </div>
         
 </div>`
@@ -66,7 +66,7 @@ function getMemo() {
                       .replace('{{DESCRIPTION}}', description)
                       .replace('{{COMMENT}}', comment)
                       .replace('{{IMAGE}}',image)
-                      .replace('{{ID}}', id)
+                      .replaceAll('{{ID}}', id)
           $('.media-container').append(newMedia)  
         })
       }
@@ -109,7 +109,7 @@ function addMemo() {
                     .replace('{{DESCRIPTION}}', description)
                     .replace('{{COMMENT}}', comment)
                     .replace('{{IMAGE}}',image)
-                    .replace('{{ID}}', id)
+                    .replaceAll('{{ID}}', id)
         $('.media-container').append(newMedia)
         media_container_toggle()
         alert("포스팅 성공!")
@@ -167,13 +167,62 @@ function modifyMemo(e) {
   mediaBody.hide()
   modifyForm.show()
 
-  modifyForm.find('div.form-group>input#post-url').val(postUrl)
-  modifyForm.find('div.form-group>input#post-title').val(postTitle)
-  modifyForm.find('div.form-group>input#post-image-url').val(imgUrl)
-  modifyForm.find('div.form-group>textarea#post-description').text(postDescription)
-  modifyForm.find('div.form-group>textarea#post-comment').text(postComment)
+  modifyForm.find('#post-url').val(postUrl)
+  modifyForm.find('#post-title').val(postTitle)
+  modifyForm.find('#post-image-url').val(imgUrl)
+  modifyForm.find('#post-description').val(postDescription)
+  modifyForm.find('#post-comment').val(postComment)
+}
 
+function modifyComplete(id) {
+  let modifyForm = $(`#${id}`).find('.modify-form-container')
+  let imgTag = $(`#${id}`).children('img')
+  let mediaBody = $(`#${id}`).children('.media-body')  
   
+  let url_give, title_give, image_url_give, description_give, comment_give
+  
+  url_give = modifyForm.find('div.form-group>input#post-url').val()
+  title_give = modifyForm.find('div.form-group>input#post-title').val()
+  image_url_give = modifyForm.find('div.form-group>input#post-image-url').val()
+  description_give = modifyForm.find('div.form-group>textarea#post-description').val()
+  comment_give = modifyForm.find('div.form-group>textarea#post-comment').val()
+  
+  $.ajax({
+    type: "POST",
+    url: "/api/modifyPost",
+    data: {url_give, 
+          title_give, 
+          image_url_give,
+          description_give,
+          comment_give,
+          id_give:id},
+    success: function({result}) {
+      if (result === 'success'){
+        // 내용 변경 
+        imgUrl = imgTag.attr('src', image_url_give)
+        postTitle = mediaBody.find('.media-contents-container .mt-0>a').text(title_give)
+        postUrl = mediaBody.find('.media-contents-container .mt-0>a').attr('href', url_give)
+        postDescription = mediaBody.find('.media-contents-container>.post-description-text').text(description_give)
+        postComment = mediaBody.find('.media-contents-container>.mb-0').text(comment_give)
+        
+        imgTag.show()
+        mediaBody.show()
+        modifyForm.hide()
+
+        alert('수정 완료')
+      }
+    }
+  })
+}
+
+function modifyCancle(id) {
+  let imgTag = $(`#${id}`).children('img')
+  let mediaBody = $(`#${id}`).children('.media-body')  
+  let modifyForm = $(`#${id}`).children('.modify-form-container')
+
+  imgTag.show()
+  mediaBody.show()
+  modifyForm.hide()
 }
 
 $(document).ready(function(){
